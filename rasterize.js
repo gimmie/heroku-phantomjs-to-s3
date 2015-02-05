@@ -39,27 +39,31 @@ if (system.args.length < 3 || system.args.length > 5) {
         phantom.exit();
     }
 
-    var saveMessagePreview = function(){
-        if (window.document.querySelectorAll("body#message_snapshot").size() > 0) {
-            var message = window.document.querySelectorAll("body div").first();
-            console.log message
-            var size = message.width()
-            if (message.height() > size ) {
-              size = message.height();
-            }
-
-            page.viewportSize = { width: size+10, height: size+10 };
-        }
-    }
-
     page.open(address, function (status) {
         if (status !== 'success') {
             console.log('Unable to load the address!');
             phantom.exit();
         } else {
             if(window.document.readyState == "complete"){
-                saveMessagePreview()
-                renderAndExit()
+
+                var clipRect = page.evaluate(function () {
+                  var c = null;
+                  if ($("body#message_snapshot").size() > 0) {
+                    c = document.querySelector("body#message_snapshot div").getBoundingClientRect();
+                  }
+                  return c;
+                });
+
+                if (clipRect!=null) {
+                    page.clipRect = {
+                        top:    clipRect.top,
+                        left:   clipRect.left,
+                        width:  clipRect.width,
+                        height: clipRect.height
+                    };
+                }
+
+                renderAndExit();
             } else {
                 window.addEventListener ?
                 window.addEventListener("load", renderAndExit, false) :
