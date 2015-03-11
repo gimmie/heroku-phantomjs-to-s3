@@ -44,7 +44,7 @@ app.post('/screenshot', function(request, response) {
         }else{
           upload_params = {
             Body: temp_png_data,
-            Key: uuid.raw() + ".png",
+            Key: uuid.v1() + ".png",
             ACL: "public-read",
             Bucket: process.env.AWS_BUCKET_NAME
           }
