@@ -23,6 +23,8 @@ app.post('/screenshot', function(request, response) {
   var filename = uuid.v1() + '.jpg';
   var filenameFull = './images/' + filename;
   var childArgs = [
+    '--ignore-ssl-errors=yes',
+    '--ssl-protocol=any',
     'rasterize.js',
     format(request.body.address),
     filenameFull,
@@ -30,7 +32,7 @@ app.post('/screenshot', function(request, response) {
   ];
   //grap the screen
   childProcess.execFile('phantomjs', childArgs, function(error, stdout, stderr){
-    console.log("Grabbing screen for: " + request.body.address);
+    console.log("Taking screenshot from: " + request.body.address);
     if(error !== null) {
       console.log("Error capturing page: " + error.message + "\n for address: " + childArgs[1]);
       return response.json(500, { 'error': 'Problem capturing page.' });
@@ -57,6 +59,7 @@ app.post('/screenshot', function(request, response) {
               fs.unlink(filenameFull, function(err){}); //delete local file
               var s3Url = 'https://s3-' + process.env.AWS_REGION + ".amazonaws.com/" + process.env.AWS_BUCKET_NAME +
               '/' + upload_params.Key;
+              console.log("Snapshot saved as: " + s3Url)
               return response.json(200, { 'url': s3Url });
             }
           });
