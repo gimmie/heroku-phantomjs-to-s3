@@ -1,7 +1,7 @@
 var page = require('webpage').create(),
     system = require('system'),
     fs = require('fs'),
-    address, output, size, element;
+    address, output, size;
 
 log = function (message) {
     fs.write("log", message + '\n', "w");
@@ -42,7 +42,7 @@ if (system.args.length < 3 || system.args.length > 5) {
 
     var renderAndExit = function(){
         log('rendering!');
-        page.render(output, {format: 'png', quality: '100'});
+        page.render(output, {format: 'jpg', quality: '95'});
         if (fs.exists(output)) log("written image to disk!");
         phantom.exit();
     }

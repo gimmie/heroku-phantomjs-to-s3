@@ -20,14 +20,13 @@ app.post('/screenshot', function(request, response) {
     return response.json(400, { 'error': 'You need to provide the website address.' });
   }
 
-  var filename = uuid.v1() + '.png';
+  var filename = uuid.v1() + '.jpg';
   var filenameFull = './images/' + filename;
   var childArgs = [
     'rasterize.js',
     format(request.body.address),
     filenameFull,
-    request.body.size? request.body.size : '',
-    "log to file"
+    request.body.size? request.body.size : ''
   ];
   //grap the screen
   childProcess.execFile('phantomjs', childArgs, function(error, stdout, stderr){
@@ -44,7 +43,7 @@ app.post('/screenshot', function(request, response) {
         }else{
           upload_params = {
             Body: temp_png_data,
-            Key: uuid.v1() + ".png",
+            Key: uuid.v1() + ".jpg",
             ACL: "public-read",
             Bucket: process.env.AWS_BUCKET_NAME
           }
