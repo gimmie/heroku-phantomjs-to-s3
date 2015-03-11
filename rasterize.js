@@ -61,11 +61,6 @@ if (system.args.length < 3 || system.args.length > 5) {
                         width:  clipRect.width,
                         height: clipRect.height
                     };
-                } else {
-                  if (address.substr(30) === "http://mvp.gimmie.io/messages/") {
-                    console.log('Unable to take message snapshot!');
-                    phantom.exit();
-                  }
                 }
 
                 renderAndExit();
