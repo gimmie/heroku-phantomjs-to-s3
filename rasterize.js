@@ -64,7 +64,7 @@ if (system.args.length < 3 || system.args.length > 5) {
                       return c;
                     });
 
-                    if (clipRect!=null) {
+                    if (clipRect!=null && clipRect!='') {
                         page.clipRect = {
                             top:    clipRect.top,
                             left:   clipRect.left,
