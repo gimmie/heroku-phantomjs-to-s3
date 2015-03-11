@@ -48,8 +48,9 @@ if (system.args.length < 3 || system.args.length > 5) {
 
                 var clipRect = page.evaluate(function () {
                   var c = null;
-                  if ($("body#message_snapshot").size() > 0) {
-                    c = document.querySelector("body#message_snapshot div").getBoundingClientRect();
+                  message_element = document.querySelector("body#message_snapshot div")
+                  if (message_element != null) {
+                    c = message_element.getBoundingClientRect();
                   }
                   return c;
                 });

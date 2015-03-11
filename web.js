@@ -1,6 +1,6 @@
 var express = require('express');
 var childProcess = require('child_process');
-var guid = require('guid');
+var uuid = require('node-uuid');
 var AWS = require('aws-sdk');
 var fs = require('fs');
 var s3 = new AWS.S3({region: process.env.AWS_REGION});
@@ -20,7 +20,7 @@ app.post('/screenshot', function(request, response) {
     return response.json(400, { 'error': 'You need to provide the website address.' });
   }
 
-  var filename = guid.raw() + '.png';
+  var filename = uuid.v1() + '.png';
   var filenameFull = './images/' + filename;
   var childArgs = [
     'rasterize.js',
@@ -44,7 +44,7 @@ app.post('/screenshot', function(request, response) {
         }else{
           upload_params = {
             Body: temp_png_data,
-            Key: guid.raw() + ".png",
+            Key: uuid.raw() + ".png",
             ACL: "public-read",
             Bucket: process.env.AWS_BUCKET_NAME
           }
