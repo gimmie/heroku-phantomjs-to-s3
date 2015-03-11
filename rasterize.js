@@ -4,9 +4,9 @@ var page = require('webpage').create(),
     address, output, size;
 
 log = function (message) {
-    fs.write("log", message + '\n', "w");
+    fs.write(".log", message + '\n', "w");
 }
-log(system.args)
+
 if (system.args.length < 3 || system.args.length > 5) {
     log('Usage: rasterize.js URL filename [paperwidth*paperheight|paperformat] [zoom]');
     log('  paper (pdf output) examples: "5in*7.5in", "10cm*20cm", "A4", "Letter"');
@@ -41,9 +41,8 @@ if (system.args.length < 3 || system.args.length > 5) {
     }
 
     var renderAndExit = function(){
-        log('rendering!');
         page.render(output, {format: 'jpg', quality: '95'});
-        if (fs.exists(output)) log("written image to disk!");
+        if (fs.exists(output)) log("Written image to disk!");
         phantom.exit();
     }
 
@@ -53,8 +52,9 @@ if (system.args.length < 3 || system.args.length > 5) {
             phantom.exit();
         } else {
             if(window.document.readyState == "complete"){
+
                 if (address.indexOf("http://mvp.gimmie.io/messages/") != -1 ){
-                    //gimmie's page, clip to fit the message!
+                    log('Message snapshot identified!');
                     var clipRect = page.evaluate(function () {
                       var c = null;
                       message_element = document.querySelector("body#message_snapshot div")
