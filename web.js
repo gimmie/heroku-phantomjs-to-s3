@@ -27,8 +27,8 @@ app.post('/screenshot', function(request, response) {
     format(request.body.address),
     filenameFull,
     request.body.size? request.body.size : '',
+    "log to file"
   ];
-
   //grap the screen
   childProcess.execFile('phantomjs', childArgs, function(error, stdout, stderr){
     console.log("Grabbing screen for: " + request.body.address);

@@ -1,11 +1,17 @@
 var page = require('webpage').create(),
     system = require('system'),
+    fs = require('fs'),
     address, output, size, element;
+
+log = function (message) {
+    fs.write("log", message + '\n', "w");
+}
+log(system.args)
 if (system.args.length < 3 || system.args.length > 5) {
-    console.log('Usage: rasterize.js URL filename [paperwidth*paperheight|paperformat] [zoom]');
-    console.log('  paper (pdf output) examples: "5in*7.5in", "10cm*20cm", "A4", "Letter"');
-    console.log('  image (png/jpg output) examples: "1920px" entire page, window width 1920px');
-    console.log('                                   "800px*600px" window, clipped to 800x600');
+    log('Usage: rasterize.js URL filename [paperwidth*paperheight|paperformat] [zoom]');
+    log('  paper (pdf output) examples: "5in*7.5in", "10cm*20cm", "A4", "Letter"');
+    log('  image (png/jpg output) examples: "1920px" entire page, window width 1920px');
+    log('                                   "800px*600px" window, clipped to 800x600');
     phantom.exit(1);
 } else {
     address = system.args[1];
@@ -23,10 +29,10 @@ if (system.args.length < 3 || system.args.length > 5) {
             page.viewportSize = { width: pageWidth, height: pageHeight };
             page.clipRect = { top: 0, left: 0, width: pageWidth, height: pageHeight };
         } else {
-            console.log("size:", system.args[3]);
+            log("size:", system.args[3]);
             pageWidth = parseInt(system.args[3], 10);
             pageHeight = parseInt(pageWidth * 3/4, 10); // it's as good an assumption as any
-            console.log ("pageHeight:",pageHeight);
+            log("pageHeight:",pageHeight);
             page.viewportSize = { width: pageWidth, height: pageHeight };
         }
     }
@@ -35,38 +41,40 @@ if (system.args.length < 3 || system.args.length > 5) {
     }
 
     var renderAndExit = function(){
-        page.render(output);
+        log('rendering!');
+        page.render(output, {format: 'png', quality: '100'});
+        if (fs.exists(output)) log("written image to disk!");
         phantom.exit();
     }
 
     page.open(address, function (status) {
         if (status !== 'success') {
-            console.log('Unable to load the address!');
+            log('Unable to load the address!');
             phantom.exit();
         } else {
             if(window.document.readyState == "complete"){
+                if (address.indexOf("http://mvp.gimmie.io/messages/") != -1 ){
+                    //gimmie's page, clip to fit the message!
+                    var clipRect = page.evaluate(function () {
+                      var c = null;
+                      message_element = document.querySelector("body#message_snapshot div")
+                      if (message_element != null) {
+                        c = message_element.getBoundingClientRect();
+                      }
+                      return c;
+                    });
 
-                var clipRect = page.evaluate(function () {
-                  var c = null;
-                  message_element = document.querySelector("body#message_snapshot div")
-                  if (message_element != null) {
-                    c = message_element.getBoundingClientRect();
-                  }
-                  return c;
-                });
-
-                if (clipRect!=null) {
-                    page.clipRect = {
-                        top:    clipRect.top,
-                        left:   clipRect.left,
-                        width:  clipRect.width,
-                        height: clipRect.height
-                    };
-                } else {
-                  if (address.substr(30) === "http://mvp.gimmie.io/messages/") {
-                    console.log('Unable to take message snapshot!');
-                    phantom.exit();
-                  }
+                    if (clipRect!=null) {
+                        page.clipRect = {
+                            top:    clipRect.top,
+                            left:   clipRect.left,
+                            width:  clipRect.width,
+                            height: clipRect.height
+                        };
+                    } else {
+                        log('Unable to take message snapshot!');
+                        phantom.exit();
+                    }
                 }
 
                 renderAndExit();
