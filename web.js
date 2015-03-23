@@ -4,6 +4,7 @@ var uuid = require('node-uuid');
 var AWS = require('aws-sdk');
 var fs = require('fs');
 var s3 = new AWS.S3({region: process.env.AWS_REGION});
+var stathat = require('stathat');
 
 var app = express();
 app.use(express.bodyParser());
@@ -59,7 +60,8 @@ app.post('/screenshot', function(request, response) {
               fs.unlink(filenameFull, function(err){}); //delete local file
               var s3Url = 'https://s3-' + process.env.AWS_REGION + ".amazonaws.com/" + process.env.AWS_BUCKET_NAME +
               '/' + upload_params.Key;
-              console.log("Snapshot saved as: " + s3Url)
+              console.log("Snapshot saved as: " + s3Url);
+              stathat.trackEZCount(process.env.STATHAT_CREDENTIAL, "Snapshot", 1, function(status, json) {});
               return response.json(200, { 'url': s3Url });
             }
           });
