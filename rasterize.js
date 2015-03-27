@@ -53,7 +53,7 @@ if (system.args.length < 3 || system.args.length > 5) {
         } else {
             if(window.document.readyState == "complete"){
 
-                if (address.indexOf("http://mvp.gimmie.io/messages/") != -1 ){
+                if (address.indexOf("http://convert.gimmie.io/messages/") != -1 ){
                     log('Message snapshot identified!');
                     var clipRect = page.evaluate(function () {
                       var c = null;
