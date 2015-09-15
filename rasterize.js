@@ -53,7 +53,7 @@ if (system.args.length < 3 || system.args.length > 5) {
         } else {
             if(window.document.readyState == "complete"){
 
-                if (address.indexOf("http://convert.gimmie.io/messages/") != -1 ){
+                if (address.indexOf("deepo") != -1  || address.indexOf("localhost:3000") != -1){
                     log('Message snapshot identified!');
                     var clipRect = page.evaluate(function () {
                       var c = null;
