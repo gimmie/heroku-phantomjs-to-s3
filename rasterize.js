@@ -53,28 +53,26 @@ if (system.args.length < 3 || system.args.length > 5) {
         } else {
             if(window.document.readyState == "complete"){
 
-                if (address.indexOf("deepo") != -1  || address.indexOf("localhost:3000") != -1){
-                    log('Message snapshot identified!');
-                    var clipRect = page.evaluate(function () {
-                      var c = null;
-                      message_element = document.querySelector("body#message_snapshot div")
-                      if (message_element != null) {
-                        c = message_element.getBoundingClientRect();
-                      }
-                      return c;
-                    });
+                log('Message snapshot identified!');
+                var clipRect = page.evaluate(function () {
+                  var c = null;
+                  message_element = document.querySelector("body#message_snapshot div")
+                  if (message_element != null) {
+                    c = message_element.getBoundingClientRect();
+                  }
+                  return c;
+                });
 
-                    if (clipRect!=null && clipRect!='') {
-                        page.clipRect = {
-                            top:    clipRect.top,
-                            left:   clipRect.left,
-                            width:  clipRect.width,
-                            height: clipRect.height
-                        };
-                    } else {
-                        log('Unable to take message snapshot!');
-                        phantom.exit();
-                    }
+                if (clipRect!=null && clipRect!='') {
+                    page.clipRect = {
+                        top:    clipRect.top,
+                        left:   clipRect.left,
+                        width:  clipRect.width,
+                        height: clipRect.height
+                    };
+                } else {
+                    log('Unable to take message snapshot!');
+                    phantom.exit();
                 }
 
                 renderAndExit();
