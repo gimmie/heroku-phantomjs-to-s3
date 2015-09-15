@@ -41,6 +41,7 @@ app.post('/screenshot', function(request, response) {
       //load the saved file
       fs.readFile(filenameFull, function(err, temp_png_data){
         if(err!=null){
+          console.log(temp_png_data);
           console.log("Error loading saved screenshot: " + err.message);
           return response.json(500, { 'error': 'Problem loading saved page.' });
         }else{
