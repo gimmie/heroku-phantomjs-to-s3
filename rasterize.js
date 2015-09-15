@@ -56,7 +56,7 @@ if (system.args.length < 3 || system.args.length > 5) {
                 log('Message snapshot identified!');
                 var clipRect = page.evaluate(function () {
                   var c = null;
-                  message_element = document.querySelector("body#message_snapshot div")
+                  message_element = document.querySelector("body #dpo-container-box")
                   if (message_element != null) {
                     c = message_element.getBoundingClientRect();
                   }
