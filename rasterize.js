@@ -1,7 +1,7 @@
 var page = require('webpage').create(),
     system = require('system'),
     fs = require('fs'),
-    address, output, size;
+    address, output, selector, size;
 
 log = function (message) {
     fs.write(".log", message + '\n', "w");
@@ -16,28 +16,29 @@ if (system.args.length < 3 || system.args.length > 5) {
 } else {
     address = system.args[1];
     output = system.args[2];
+    selector = system.args[3];
     page.viewportSize = { width: 600, height: 600 };
-    if (system.args.length > 3 && system.args[2].substr(-4) === ".pdf") {
-        size = system.args[3].split('*');
+    if (system.args.length > 4 && system.args[2].substr(-4) === ".pdf") {
+        size = system.args[4].split('*');
         page.paperSize = size.length === 2 ? { width: size[0], height: size[1], margin: '0px' }
                                            : { format: system.args[3], orientation: 'portrait', margin: '1cm' };
-    } else if (system.args.length > 3 && system.args[3].substr(-2) === "px") {
-        size = system.args[3].split('*');
+    } else if (system.args.length > 4 && system.args[4].substr(-2) === "px") {
+        size = system.args[4].split('*');
         if (size.length === 2) {
             pageWidth = parseInt(size[0], 10);
             pageHeight = parseInt(size[1], 10);
             page.viewportSize = { width: pageWidth, height: pageHeight };
             page.clipRect = { top: 0, left: 0, width: pageWidth, height: pageHeight };
         } else {
-            log("size:", system.args[3]);
-            pageWidth = parseInt(system.args[3], 10);
+            log("size:", system.args[4]);
+            pageWidth = parseInt(system.args[4], 10);
             pageHeight = parseInt(pageWidth * 3/4, 10); // it's as good an assumption as any
             log("pageHeight:",pageHeight);
             page.viewportSize = { width: pageWidth, height: pageHeight };
         }
     }
-    if (system.args.length > 4) {
-        page.zoomFactor = system.args[4];
+    if (system.args.length > 5) {
+        page.zoomFactor = system.args[5];
     }
 
     var renderAndExit = function(){
@@ -54,14 +55,14 @@ if (system.args.length < 3 || system.args.length > 5) {
             if(window.document.readyState == "complete"){
 
                 log('Message snapshot identified!');
-                var clipRect = page.evaluate(function () {
+                var clipRect = page.evaluate(function (selector) {
                   var c = null;
-                  message_element = document.querySelector("body #dpo-container-box")
+                  message_element = document.querySelector(selector)
                   if (message_element != null) {
                     c = message_element.getBoundingClientRect();
                   }
                   return c;
-                });
+                }, selector);
 
                 if (clipRect!=null && clipRect!='') {
                     page.clipRect = {
