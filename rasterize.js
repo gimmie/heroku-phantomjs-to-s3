@@ -7,7 +7,7 @@ log = function (message) {
     fs.write(".log", message + '\n', "w");
 }
 
-console.log(system.args);
+log(system.args);
 
 if (system.args.length < 3 || system.args.length > 5) {
     log('Usage: rasterize.js URL filename [paperwidth*paperheight|paperformat] [zoom]');
