@@ -7,6 +7,8 @@ log = function (message) {
     fs.write(".log", message + '\n', "w");
 }
 
+console.log(system.args);
+
 if (system.args.length < 3 || system.args.length > 5) {
     log('Usage: rasterize.js URL filename [paperwidth*paperheight|paperformat] [zoom]');
     log('  paper (pdf output) examples: "5in*7.5in", "10cm*20cm", "A4", "Letter"');

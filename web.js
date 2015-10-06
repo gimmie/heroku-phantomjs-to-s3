@@ -29,9 +29,12 @@ app.post('/screenshot', function(request, response) {
     'rasterize.js',
     format(request.body.address),
     filenameFull,
-    request.body.dom,
+    request.body.selector,
     request.body.size? request.body.size : ''
   ];
+
+  console.log(childArgs);
+
   //grap the screen
   childProcess.execFile('phantomjs', childArgs, function(error, stdout, stderr){
     console.log("Taking screenshot from: " + request.body.address);
